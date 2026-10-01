@@ -1,0 +1,42 @@
+# Release project to Maven Central when a version tag is created
+name: maven-release
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build-and-upload-to-central:
+    runs-on: ubuntu-latest
+    steps:
+#    Setup Maven action to specify maven version > required for BUG https://issues.apache.org/jira/browse/MNG-7055
+    - name: Setup Maven Action
+      uses: s4u/setup-maven-action@v1.21.0
+      with:
+        java-version: '17'
+        java-distribution: 'temurin'
+        maven-version: '3.9.9'
+        cache-enabled: 'false'
+        settings-servers: | 
+          [{
+          "id": "central", 
+          "username": "${{ secrets.OPENAPI_OSSRH_USERNAME }}",
+          "password": "${{ secrets.OPENAPI_OSSRH_TOKEN }}"
+          }]
+    - name: Build and deploy with Maven
+      run: mvn -B deploy -Drevision=${GITHUB_REF_NAME:1} -Prelease
+      env:
+        MAVEN_GPG_KEY: ${{ secrets.OPENAPI_OSSRH_GPG_SECRET_KEY }}
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.OPENAPI_OSSRH_GPG_SECRET_KEY_PASSWORD }}
+        MAVEN_CENTRAL_USER: ${{ secrets.OPENAPI_OSSRH_USERNAME }}
+        MAVEN_CENTRAL_TOKEN: ${{ secrets.OPENAPI_OSSRH_TOKEN }}
+
+  create-github-release:
+    runs-on: ubuntu-latest
+    needs: [build-and-upload-to-central]
+    steps:
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${GITHUB_REF} --draft --title "Release ${GITHUB_REF_NAME}" --notes "Changes:
+          - [placeholder]"

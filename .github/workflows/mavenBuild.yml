@@ -1,0 +1,26 @@
+# Maven CI build
+name: openapi-overlay-maven-ci
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        maven: [ '3.8.1', '3.9.9' ]
+
+    steps:
+#    Setup Maven action to specify maven version > required for BUG https://issues.apache.org/jira/browse/MNG-7055
+    - name: Setup Maven Action
+      uses: s4u/setup-maven-action@v1.21.0
+      with:
+        java-version: '17'
+        java-distribution: 'temurin'
+        maven-version: ${{ matrix.maven }}
+        cache-enabled: 'false'
+    - name: Build with Maven
+      run: mvn -B verify
