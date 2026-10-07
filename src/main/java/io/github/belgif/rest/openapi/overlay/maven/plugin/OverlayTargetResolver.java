@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /** Resolves the OpenAPI documents to which one overlay is applied. */
 public final class OverlayTargetResolver {
@@ -22,7 +24,7 @@ public final class OverlayTargetResolver {
         this.configuredPatterns = configuredPatterns == null ? List.of() : configuredPatterns;
     }
 
-    public List<Path> resolve(Path overlay) throws IOException {
+    public Set<Path> resolve(Path overlay) throws IOException {
         Overlay model = OverlayJVM.parseOverlay(overlay.toFile());
         if (model.getExtends() != null && !model.getExtends().isBlank()) {
             Path extended = inputDirectory.resolve(model.getExtends()).normalize();
@@ -30,7 +32,7 @@ public final class OverlayTargetResolver {
                 throw new IOException("Overlay extends file must be an existing file inside inputDirectory: "
                         + model.getExtends());
             }
-            return List.of(extended);
+            return Set.of(extended);
         }
         if (!configuredPatterns.isEmpty()) {
             return findMatching(configuredPatterns);
@@ -38,9 +40,9 @@ public final class OverlayTargetResolver {
         return findMatching(List.of("**/*.json", "**/*.yaml", "**/*.yml"));
     }
 
-    private List<Path> findMatching(List<String> patterns) {
+    private Set<Path> findMatching(List<String> patterns) {
         if (!Files.isDirectory(inputDirectory)) {
-            return List.of();
+            return Set.of();
         }
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(inputDirectory.toFile());
@@ -52,8 +54,7 @@ public final class OverlayTargetResolver {
                 .map(inputDirectory::resolve)
                 .filter(Files::isRegularFile)
                 .map(path -> path.toAbsolutePath().normalize())
-                .distinct()
-                .toList();
+                .collect(Collectors.toSet());
     }
 }
 

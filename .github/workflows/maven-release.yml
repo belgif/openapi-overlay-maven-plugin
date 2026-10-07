@@ -1,5 +1,7 @@
 # Release project to Maven Central when a version tag is created
 name: maven-release
+permissions:
+    contents: write
 on:
   push:
     tags:

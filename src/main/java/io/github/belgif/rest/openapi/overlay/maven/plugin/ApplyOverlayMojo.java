@@ -14,11 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Stream;
 
 /** Applies OpenAPI Overlay documents during Maven's generate-resources phase. */
@@ -85,7 +81,7 @@ public class ApplyOverlayMojo extends AbstractMojo {
     private Map<Path, String> applyOverlays(List<Path> overlayFiles, OverlayTargetResolver resolver, OverlayApplier applier) throws IOException {
         Map<Path, String> transformed = new LinkedHashMap<>();
         for (Path overlay : overlayFiles) {
-            List<Path> targets = resolver.resolve(overlay);
+            Set<Path> targets = resolver.resolve(overlay);
             String overlayText = Files.readString(overlay, StandardCharsets.UTF_8);
             for (Path target : targets) {
                 // multiple overlays may apply to the same target OpenAPI file, so we keep the transformation output in memory to apply subsequent overlays

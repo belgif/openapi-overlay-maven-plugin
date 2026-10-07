@@ -11,6 +11,16 @@ The output location is by default in the `target/generated-resources/openapi` di
 
 This plugin uses the [WebFuzzing's overlay-jvm library](https://github.com/WebFuzzing/overlay-jvm) to apply overlays to OpenAPI documents.
 
+## Use cases
+
+Some examples when OpenAPI overlays come in handy:
+
+* Adding or removing vendor extensions to an OpenAPI document only used for internal tooling, for example to add Jakarta Bean Validation annotations for the server-side implementation
+* Adapt a third party OpenAPI document to your own needs, such as improving its compatibility with code generation tooling, adding a `servers` section or changing the `basePath`
+* Adding common traits to definitions, such as standard headers for each operation
+
+You can find more use cases and examples of overlays on the [Learn OpenAPI website](https://learn.openapis.org/overlay/).
+
 ## Usage
 
 The plugin goal is `openapi-overlay:apply` and is bound by default to the
@@ -63,13 +73,3 @@ These are the default configuration values for the plugin:
   </executions>
 </plugin>
 ```
-
-## Use cases
-
-Example use cases for using OpenAPI overlays include:
-
-* Adding or removing vendor extensions to an OpenAPI document only used for internal tooling, for example to add Jakarta Bean Validation annotations for the server-side implementation
-* Adapt a third party OpenAPI document to your own needs, such as improving its compatibility with code generation tooling, adding a `servers` section or changing the `basePath`
-* Adding common traits to definitions, such as standard headers for each operation
-
-You can find more use cases and examples of overlays on the [Learn OpenAPI website](https://learn.openapis.org/overlay/).

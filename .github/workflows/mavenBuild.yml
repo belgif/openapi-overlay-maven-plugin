@@ -1,5 +1,7 @@
 # Maven CI build
 name: openapi-overlay-maven-ci
+permissions:
+  contents: read
 on:
   push:
     branches: [ main ]
