@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,9 +24,9 @@ class OverlayTargetResolverTest {
         Path configured = write("other.yaml", "openapi: 3.0.3\ninfo:\n  title: Other\n  version: 1\n");
         Path overlay = write("overlay.yaml", "overlay: 1.1.0\ninfo:\n  title: Overlay\n  version: 1\nextends: api.yaml\nactions:\n  - target: $.info.title\n    update: API\n");
 
-        List<Path> result = new OverlayTargetResolver(temp, temp, List.of("other.yaml")).resolve(overlay);
+        Set<Path> result = new OverlayTargetResolver(temp, temp, List.of("other.yaml")).resolve(overlay);
 
-        assertEquals(List.of(extended), result);
+        assertEquals(Set.of(extended), result);
         assertTrue(Files.exists(configured));
     }
 
@@ -35,9 +36,9 @@ class OverlayTargetResolverTest {
         Path inputTarget = write("input/api.yaml", "openapi: 3.0.3\ninfo:\n  title: Input directory\n  version: 1\n");
         Path overlay = write("overlays/overlay.yaml", "overlay: 1.1.0\ninfo:\n  title: Overlay\n  version: 1\nextends: api.yaml\nactions:\n  - target: $.info.title\n    update: Input directory\n");
 
-        List<Path> result = new OverlayTargetResolver(temp, temp.resolve("input"), List.of()).resolve(overlay);
+        Set<Path> result = new OverlayTargetResolver(temp, temp.resolve("input"), List.of()).resolve(overlay);
 
-        assertEquals(List.of(inputTarget), result);
+        assertEquals(Set.of(inputTarget), result);
         assertTrue(Files.exists(projectRootTarget));
     }
 
@@ -59,9 +60,9 @@ class OverlayTargetResolverTest {
         write("spec/notes.txt", "not an API");
         Path overlay = write("overlay.yaml", "overlay: 1.1.0\ninfo:\n  title: Overlay\n  version: 1\nactions:\n  - target: $.info.title\n    update: API\n");
 
-        List<Path> result = new OverlayTargetResolver(temp, temp, List.of("spec/**/*.yaml")).resolve(overlay);
+        Set<Path> result = new OverlayTargetResolver(temp, temp, List.of("spec/**/*.yaml")).resolve(overlay);
 
-        assertEquals(List.of(api), result);
+        assertEquals(Set.of(api), result);
     }
 
     @Test
@@ -71,9 +72,9 @@ class OverlayTargetResolverTest {
         Path json = write("documents/other.json", "{\"openapi\":\"3.0.3\",\"info\":{}}\n");
         Path overlay = write("overlay.yaml", "overlay: 1.1.0\ninfo:\n  title: Overlay\n  version: 1\nactions:\n  - target: $.info.title\n    update: API\n");
 
-        List<Path> result = new OverlayTargetResolver(temp, temp.resolve("documents"), List.of()).resolve(overlay);
+        Set<Path> result = new OverlayTargetResolver(temp, temp.resolve("documents"), List.of()).resolve(overlay);
 
-        assertEquals(List.of(yaml, json, yml), result);
+        assertEquals(Set.of(yaml, json, yml), result);
     }
 
     @Test
@@ -83,9 +84,9 @@ class OverlayTargetResolverTest {
         Path nestedYaml = write("input/documents/api.yaml", "openapi: 3.0.3\ninfo: {}\n");
         Path overlay = write("overlay.yaml", "overlay: 1.1.0\ninfo:\n  title: Overlay\n  version: 1\nactions:\n  - target: $.info.title\n    update: API\n");
 
-        List<Path> result = new OverlayTargetResolver(temp, input, List.of("**/*.yaml")).resolve(overlay);
+        Set<Path> result = new OverlayTargetResolver(temp, input, List.of("**/*.yaml")).resolve(overlay);
 
-        assertEquals(List.of(rootYaml, nestedYaml), result);
+        assertEquals(Set.of(rootYaml, nestedYaml), result);
     }
 
     private Path write(String name, String content) throws Exception {
