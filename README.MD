@@ -1,6 +1,6 @@
 This Maven plugin can be used to apply overlays to OpenAPI documents during the build process, enabling developers to customize and extend their API definitions without modifying the original OpenAPI files directly.
 
-The format of these overlay documents is specified by the [OpenAPI Overlay 1.1 Specification](https://spec.openapis.org/overlay/v1.1.0.html).
+The format of these overlay documents is specified by the [OpenAPI Overlay Specification v1.1](https://spec.openapis.org/overlay/v1.1.0.html).
 
 The input OpenAPI document(s) can be specified, in order of descending priority, by:
 * in the `extends` field of the overlay document, with a relative path to a file in the Maven project
