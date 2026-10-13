@@ -23,6 +23,8 @@ You can find more use cases and examples of overlays on the [Learn OpenAPI websi
 
 ## Usage
 
+This plugin is [available on Maven Central](https://central.sonatype.com/artifact/io.github.belgif.rest.openapi/openapi-overlay-maven-plugin).
+
 The plugin goal is `openapi-overlay:apply` and is bound by default to the
 `generate-resources` phase. Overlay files are discovered recursively in
 `src/main/openapi-overlay/` by convention. This directory can be changed with
