@@ -1,0 +1,1 @@
+This project is build using Maven and GitHub Actions. The build and release process of this project is documented [here](https://github.com/belgif/openapi-common/blob/main/BUILDING.md).
